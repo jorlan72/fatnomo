@@ -2,6 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import WeightEntry from "@/components/WeightEntry";
 import WeightHistory from "@/components/WeightHistory";
 import WeightChart from "@/components/WeightChart";
@@ -51,10 +62,23 @@ const Index = () => {
     const { data, error } = await supabase
       .from("weight_entries")
       .select("*")
-      .order("entry_date", { ascending: false });
+      .order("created_at", { ascending: false });
 
     if (!error && data) {
       setEntries(data);
+    }
+  };
+
+  const handleDeleteAllData = async () => {
+    const { error } = await supabase
+      .from("weight_entries")
+      .delete()
+      .eq("user_id", user?.id);
+
+    if (error) {
+      console.error("Error deleting entries:", error);
+    } else {
+      setEntries([]);
     }
   };
 
@@ -97,6 +121,36 @@ const Index = () => {
           <WeightEntry onEntryAdded={fetchEntries} />
           <WeightChart entries={entries} />
           <WeightHistory entries={entries} />
+          
+          <div className="flex justify-center pt-4">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
+                >
+                  Delete All Data
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete all your weight entries.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={handleDeleteAllData}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Delete All
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </main>
     </div>
