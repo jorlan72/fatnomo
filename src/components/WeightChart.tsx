@@ -35,7 +35,21 @@ const WeightChart = ({ entries }: WeightChartProps) => {
     };
   };
 
+  const calculateStats = () => {
+    if (entries.length === 0) return null;
+    const weights = entries.map(e => e.weight_kg);
+    const highest = Math.max(...weights);
+    const lowest = Math.min(...weights);
+    const average = weights.reduce((sum, w) => sum + w, 0) / weights.length;
+    return {
+      highest: highest.toFixed(1),
+      lowest: lowest.toFixed(1),
+      average: average.toFixed(1),
+    };
+  };
+
   const progress = calculateProgress();
+  const stats = calculateStats();
 
   return (
     <Card className="shadow-lg border-border/50">
@@ -84,6 +98,22 @@ const WeightChart = ({ entries }: WeightChartProps) => {
               />
             </LineChart>
           </ResponsiveContainer>
+        )}
+        {stats && (
+          <div className="mt-6 grid grid-cols-3 gap-4 pt-4 border-t border-border/50">
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-1">Highest Weight</p>
+              <p className="text-2xl font-bold text-foreground">{stats.highest} kg</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-1">Average Weight</p>
+              <p className="text-2xl font-bold text-foreground">{stats.average} kg</p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-1">Lowest Weight</p>
+              <p className="text-2xl font-bold text-foreground">{stats.lowest} kg</p>
+            </div>
+          </div>
         )}
       </CardContent>
     </Card>

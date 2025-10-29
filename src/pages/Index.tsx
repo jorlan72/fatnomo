@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +29,7 @@ interface WeightEntryData {
 
 const Index = () => {
   const navigate = useNavigate();
+  const { setTheme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [entries, setEntries] = useState<WeightEntryData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,8 +58,42 @@ const Index = () => {
   useEffect(() => {
     if (user) {
       fetchEntries();
+      loadUserTheme();
     }
   }, [user]);
+
+  const loadUserTheme = async () => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("theme")
+      .eq("user_id", user?.id)
+      .maybeSingle();
+
+    if (data?.theme) {
+      setTheme(data.theme);
+    }
+  };
+
+  const handleThemeChange = async (theme: string) => {
+    if (!user) return;
+
+    const { data: existingProfile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (existingProfile) {
+      await supabase
+        .from("profiles")
+        .update({ theme })
+        .eq("user_id", user.id);
+    } else {
+      await supabase
+        .from("profiles")
+        .insert({ user_id: user.id, theme });
+    }
+  };
 
   const fetchEntries = async () => {
     const { data, error } = await supabase
@@ -106,13 +143,16 @@ const Index = () => {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             FatNoMo
           </h1>
-          <Button 
-            onClick={handleLogout} 
-            variant="outline"
-            className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive transition-colors"
-          >
-            Log Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle onThemeChange={handleThemeChange} />
+            <Button 
+              onClick={handleLogout} 
+              variant="outline"
+              className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive transition-colors"
+            >
+              Log Out
+            </Button>
+          </div>
         </div>
       </header>
 
