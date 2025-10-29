@@ -4,38 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import ThemeToggle from "@/components/ThemeToggle";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import WeightEntry from "@/components/WeightEntry";
-import WeightHistory from "@/components/WeightHistory";
-import WeightChart from "@/components/WeightChart";
 import { User } from "@supabase/supabase-js";
-
-interface WeightEntryData {
-  id: string;
-  weight_kg: number;
-  entry_date: string;
-  created_at: string;
-}
+import { Scale } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { setTheme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
-  const [entries, setEntries] = useState<WeightEntryData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (!session) {
@@ -43,7 +21,6 @@ const Index = () => {
       }
     });
 
-    // Then check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (!session) {
@@ -57,7 +34,6 @@ const Index = () => {
 
   useEffect(() => {
     if (user) {
-      fetchEntries();
       loadUserTheme();
     }
   }, [user]);
@@ -92,30 +68,6 @@ const Index = () => {
       await supabase
         .from("profiles")
         .insert({ user_id: user.id, theme });
-    }
-  };
-
-  const fetchEntries = async () => {
-    const { data, error } = await supabase
-      .from("weight_entries")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      setEntries(data);
-    }
-  };
-
-  const handleDeleteAllData = async () => {
-    const { error } = await supabase
-      .from("weight_entries")
-      .delete()
-      .eq("user_id", user?.id);
-
-    if (error) {
-      console.error("Error deleting entries:", error);
-    } else {
-      setEntries([]);
     }
   };
 
@@ -156,40 +108,29 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="space-y-6">
-          <WeightEntry onEntryAdded={fetchEntries} />
-          <WeightChart entries={entries} />
-          <WeightHistory entries={entries} onEntryDeleted={fetchEntries} />
-          
-          <div className="flex justify-center pt-4">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
-                >
-                  Delete All Data
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete all your weight entries.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction 
-                    onClick={handleDeleteAllData}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    Delete All
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+      <main className="container mx-auto px-4 py-16 max-w-4xl">
+        <div className="text-center space-y-8">
+          <div className="space-y-4">
+            <h2 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient">
+              Welcome to FatNoMo
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Your journey to a healthier lifestyle starts here. Track your progress and achieve your goals.
+            </p>
+          </div>
+
+          <div className="grid gap-6 mt-12 max-w-2xl mx-auto">
+            <Button
+              size="lg"
+              onClick={() => navigate("/weight")}
+              className="h-24 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+            >
+              <Scale className="h-8 w-8" />
+              <div className="text-left">
+                <div className="font-bold">Weight Tracker</div>
+                <div className="text-sm opacity-90">Monitor your weight progress</div>
+              </div>
+            </Button>
           </div>
         </div>
       </main>
