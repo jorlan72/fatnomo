@@ -160,7 +160,7 @@ const Index = () => {
         <div className="space-y-6">
           <WeightEntry onEntryAdded={fetchEntries} />
           <WeightChart entries={entries} />
-          <WeightHistory entries={entries} />
+          <WeightHistory entries={entries} onEntryDeleted={fetchEntries} />
           
           <div className="flex justify-center pt-4">
             <AlertDialog>

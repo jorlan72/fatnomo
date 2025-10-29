@@ -1,6 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { Trash2 } from "lucide-react";
 
 interface WeightEntry {
   id: string;
@@ -11,9 +15,33 @@ interface WeightEntry {
 
 interface WeightHistoryProps {
   entries: WeightEntry[];
+  onEntryDeleted: () => void;
 }
 
-const WeightHistory = ({ entries }: WeightHistoryProps) => {
+const WeightHistory = ({ entries, onEntryDeleted }: WeightHistoryProps) => {
+  const { toast } = useToast();
+
+  const handleDelete = async (id: string) => {
+    const { error } = await supabase
+      .from("weight_entries")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success!",
+        description: "Weight entry deleted successfully",
+      });
+      onEntryDeleted();
+    }
+  };
+
   return (
     <Card className="shadow-lg border-border/50">
       <CardHeader>
@@ -36,9 +64,19 @@ const WeightHistory = ({ entries }: WeightHistoryProps) => {
                   <span className="text-sm text-muted-foreground">
                     {format(new Date(entry.entry_date), "MMM d, yyyy")}
                   </span>
-                  <span className="text-2xl font-bold text-primary">
-                    {entry.weight_kg} kg
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl font-bold text-primary">
+                      {entry.weight_kg} kg
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(entry.id)}
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

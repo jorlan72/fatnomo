@@ -3,9 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const weightSchema = z.object({
   weight: z.number().min(1, "Weight must be greater than 0").max(500, "Weight must be less than 500kg"),
@@ -17,6 +22,7 @@ interface WeightEntryProps {
 
 const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
   const [weight, setWeight] = useState("");
+  const [date, setDate] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -49,15 +55,37 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
       return;
     }
 
-    const { error } = await supabase
+    const entryDate = format(date, "yyyy-MM-dd");
+
+    // Check if entry already exists for this date
+    const { data: existingEntry } = await supabase
       .from("weight_entries")
-      .insert([
-        {
-          user_id: user.id,
-          weight_kg: weightNum,
-          entry_date: new Date().toISOString().split('T')[0],
-        },
-      ]);
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("entry_date", entryDate)
+      .maybeSingle();
+
+    let error;
+    if (existingEntry) {
+      // Update existing entry
+      const result = await supabase
+        .from("weight_entries")
+        .update({ weight_kg: weightNum })
+        .eq("id", existingEntry.id);
+      error = result.error;
+    } else {
+      // Insert new entry
+      const result = await supabase
+        .from("weight_entries")
+        .insert([
+          {
+            user_id: user.id,
+            weight_kg: weightNum,
+            entry_date: entryDate,
+          },
+        ]);
+      error = result.error;
+    }
 
     setIsLoading(false);
 
@@ -70,9 +98,10 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
     } else {
       toast({
         title: "Success!",
-        description: "Weight entry saved successfully",
+        description: existingEntry ? "Weight entry updated successfully" : "Weight entry saved successfully",
       });
       setWeight("");
+      setDate(new Date());
       onEntryAdded();
     }
   };
@@ -85,6 +114,34 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="date">Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                  disabled={isLoading}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate) => newDate && setDate(newDate)}
+                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="weight">Weight (kg)</Label>
             <Input
