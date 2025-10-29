@@ -115,7 +115,7 @@ const Index = () => {
               Welcome to FatNoMo
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Your journey to a healthier lifestyle starts here. Track your progress and achieve your goals.
+              Different tools made for the Fauskanger family
             </p>
           </div>
 
