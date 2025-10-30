@@ -29,7 +29,9 @@ const Auth = () => {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         navigate("/");
       }
@@ -40,7 +42,7 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validation = authSchema.safeParse({ email, password });
     if (!validation.success) {
       toast({
@@ -79,7 +81,7 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validation = authSchema.safeParse({ email, password });
     if (!validation.success) {
       toast({
@@ -115,7 +117,7 @@ const Auth = () => {
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             FatNoMo
           </CardTitle>
-          <CardDescription>Track your weight journey with ease</CardDescription>
+          <CardDescription>Daily tools made simple by Lanesskog</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
@@ -123,7 +125,7 @@ const Auth = () => {
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
@@ -159,7 +161,7 @@ const Auth = () => {
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
