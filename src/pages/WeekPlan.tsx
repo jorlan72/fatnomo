@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import ThemeToggle from "@/components/ThemeToggle";
 import { User } from "@supabase/supabase-js";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -38,9 +39,13 @@ const WeekPlan = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [entries, setEntries] = useState<Record<string, Record<string, string>>>({});
-  const currentDay = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]; // Convert Sunday=0 to Sunday=6
+  const [viewMode, setViewMode] = useState<"day" | "week">("day");
+  const currentDayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
+  const [selectedDayIndex, setSelectedDayIndex] = useState(currentDayIndex);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const timeSlotRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
 
   useEffect(() => {
     const {
@@ -180,6 +185,34 @@ const WeekPlan = () => {
     }));
   };
 
+  const navigateDay = (direction: "prev" | "next") => {
+    setSelectedDayIndex((prev) => {
+      if (direction === "next") {
+        return prev === 6 ? 0 : prev + 1;
+      } else {
+        return prev === 0 ? 6 : prev - 1;
+      }
+    });
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current - touchEndX.current > 50) {
+      navigateDay("next");
+    } else if (touchEndX.current - touchStartX.current > 50) {
+      navigateDay("prev");
+    }
+  };
+
+  const displayedDays = viewMode === "week" ? DAYS : [DAYS[selectedDayIndex]];
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-secondary to-background">
@@ -218,17 +251,45 @@ const WeekPlan = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex justify-center">
+          <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "day" | "week")} className="bg-secondary/50 p-1 rounded-lg">
+            <ToggleGroupItem value="day" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+              Show Day
+            </ToggleGroupItem>
+            <ToggleGroupItem value="week" className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">
+              Show Week
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        {viewMode === "day" && (
+          <div className="mb-4 flex items-center justify-between max-w-md mx-auto">
+            <Button variant="outline" size="icon" onClick={() => navigateDay("prev")}>
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <h2 className="text-xl font-semibold">{DAYS[selectedDayIndex]}</h2>
+            <Button variant="outline" size="icon" onClick={() => navigateDay("next")}>
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
+        )}
+
         <Card className="overflow-hidden">
           <ScrollArea className="h-[600px] w-full" ref={scrollAreaRef}>
-            <div className="min-w-max">
+            <div 
+              className="min-w-max"
+              onTouchStart={viewMode === "day" ? handleTouchStart : undefined}
+              onTouchMove={viewMode === "day" ? handleTouchMove : undefined}
+              onTouchEnd={viewMode === "day" ? handleTouchEnd : undefined}
+            >
               <Table>
                 <TableHeader className="sticky top-0 z-20 bg-card">
                   <TableRow>
                     <TableHead className="w-24 bg-card sticky left-0 z-30">Time</TableHead>
-                    {DAYS.map((day) => (
+                    {displayedDays.map((day) => (
                       <TableHead 
                         key={day} 
-                        className={`min-w-32 text-center ${day === currentDay ? 'bg-primary/10' : 'bg-card'}`}
+                        className={`min-w-32 text-center ${day === DAYS[currentDayIndex] ? 'bg-primary/10' : 'bg-card'}`}
                       >
                         {day}
                       </TableHead>
@@ -244,8 +305,8 @@ const WeekPlan = () => {
                       <TableCell className="font-medium w-24 sticky left-0 bg-card z-10 text-xs">
                         {timeSlot}
                       </TableCell>
-                      {DAYS.map((day) => (
-                        <TableCell key={`${day}-${timeSlot}`} className={`p-0 align-top min-w-32 ${day === currentDay ? 'bg-primary/5' : ''}`}>
+                      {displayedDays.map((day) => (
+                        <TableCell key={`${day}-${timeSlot}`} className={`p-0 align-top min-w-32 ${day === DAYS[currentDayIndex] ? 'bg-primary/5' : ''}`}>
                           <textarea
                             className="w-full min-h-[48px] px-2 py-3 bg-transparent border-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset text-sm resize-none"
                             value={entries[day.toLowerCase()]?.[timeSlot] || ""}
