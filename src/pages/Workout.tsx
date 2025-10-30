@@ -290,13 +290,19 @@ const Workout = () => {
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
-                                  <Command>
-                                    <CommandInput placeholder="Search or type..." />
+                                <PopoverContent className="w-[200px] p-0" onOpenAutoFocus={(e) => e.preventDefault()}>
+                                  <Command shouldFilter={false}>
+                                    <CommandInput 
+                                      placeholder="Search or type..." 
+                                      value={activity.activity}
+                                      onValueChange={(value) => handleChange(activity.id, "activity", value)}
+                                    />
                                     <CommandList>
-                                      <CommandEmpty>Type to add custom activity</CommandEmpty>
+                                      <CommandEmpty>Press Enter to use "{activity.activity}"</CommandEmpty>
                                       <CommandGroup>
-                                        {COMMON_ACTIVITIES.map((commonActivity) => (
+                                        {COMMON_ACTIVITIES.filter(ca => 
+                                          ca.toLowerCase().includes((activity.activity || "").toLowerCase())
+                                        ).map((commonActivity) => (
                                           <CommandItem
                                             key={commonActivity}
                                             value={commonActivity}
@@ -411,13 +417,19 @@ const Workout = () => {
                                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                   </PopoverTrigger>
-                                  <PopoverContent className="w-[300px] p-0">
-                                    <Command>
-                                      <CommandInput placeholder="Search or type..." />
+                                  <PopoverContent className="w-[300px] p-0" onOpenAutoFocus={(e) => e.preventDefault()}>
+                                    <Command shouldFilter={false}>
+                                      <CommandInput 
+                                        placeholder="Search or type..." 
+                                        value={activity.activity}
+                                        onValueChange={(value) => handleChange(activity.id, "activity", value)}
+                                      />
                                       <CommandList>
-                                        <CommandEmpty>Type to add custom activity</CommandEmpty>
+                                        <CommandEmpty>Press Enter to use "{activity.activity}"</CommandEmpty>
                                         <CommandGroup>
-                                          {COMMON_ACTIVITIES.map((commonActivity) => (
+                                          {COMMON_ACTIVITIES.filter(ca => 
+                                            ca.toLowerCase().includes((activity.activity || "").toLowerCase())
+                                          ).map((commonActivity) => (
                                             <CommandItem
                                               key={commonActivity}
                                               value={commonActivity}
