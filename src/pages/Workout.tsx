@@ -7,37 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import ThemeToggle from "@/components/ThemeToggle";
-import { ArrowLeft, Plus, Trash2, Save, Check, ChevronsUpDown } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-
-const COMMON_ACTIVITIES = [
-  "Push-ups",
-  "Pull-ups",
-  "Squats",
-  "Bench Press",
-  "Deadlift",
-  "Overhead Press",
-  "Barbell Row",
-  "Lunges",
-  "Plank",
-  "Bicep Curls",
-  "Tricep Dips",
-  "Leg Press",
-  "Lat Pulldown",
-  "Shoulder Press",
-  "Dumbbell Flyes",
-  "Leg Curls",
-  "Leg Extensions",
-  "Calf Raises",
-  "Running",
-  "Cycling",
-];
 
 interface WorkoutActivity {
   id: string;
@@ -57,8 +31,7 @@ const Workout = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [openCombobox, setOpenCombobox] = useState<string | null>(null);
-  const [carouselApi, setCarouselApi] = useState<any>(null);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -114,11 +87,9 @@ const Workout = () => {
     };
     setActivities([...activities, newActivity]);
     
-    // Scroll to the new activity in mobile carousel
+    // Scroll to the new activity on mobile
     setTimeout(() => {
-      if (carouselApi) {
-        carouselApi.scrollTo(activities.length);
-      }
+      carouselApi?.scrollTo(activities.length);
     }, 100);
   };
 
@@ -203,6 +174,18 @@ const Workout = () => {
   };
 
   const handleDelete = async (id: string) => {
+    // If it's a temporary activity (not saved yet), just remove from state
+    if (id.startsWith('temp-')) {
+      setActivities(activities.filter(a => a.id !== id));
+      toast({
+        title: "Success",
+        description: "Activity removed",
+      });
+      setDeleteId(null);
+      return;
+    }
+
+    // Otherwise, delete from database
     const { error } = await supabase
       .from("workout_activities")
       .delete()
@@ -257,6 +240,7 @@ const Workout = () => {
       <main className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader>
+            <CardDescription>List your workout exercises, reps, sets, and weights</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -286,53 +270,12 @@ const Workout = () => {
                         activities.map((activity) => (
                           <TableRow key={activity.id}>
                             <TableCell>
-                              <Popover open={openCombobox === `desktop-${activity.id}`} onOpenChange={(open) => setOpenCombobox(open ? `desktop-${activity.id}` : null)}>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={openCombobox === `desktop-${activity.id}`}
-                                    className="min-w-[160px] justify-between"
-                                  >
-                                    {activity.activity || "Select activity..."}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
-                                  <Command shouldFilter={false}>
-                                    <CommandInput 
-                                      placeholder="Search or type..." 
-                                      value={activity.activity}
-                                      onValueChange={(value) => handleChange(activity.id, "activity", value)}
-                                    />
-                                    <CommandList>
-                                      <CommandEmpty>Type to add custom activity</CommandEmpty>
-                                      <CommandGroup>
-                                        {COMMON_ACTIVITIES.filter(ca => 
-                                          ca.toLowerCase().includes((activity.activity || "").toLowerCase())
-                                        ).map((commonActivity) => (
-                                          <CommandItem
-                                            key={commonActivity}
-                                            value={commonActivity}
-                                            onSelect={() => {
-                                              handleChange(activity.id, "activity", commonActivity);
-                                              setOpenCombobox(null);
-                                            }}
-                                          >
-                                            <Check
-                                              className={cn(
-                                                "mr-2 h-4 w-4",
-                                                activity.activity === commonActivity ? "opacity-100" : "opacity-0"
-                                              )}
-                                            />
-                                            {commonActivity}
-                                          </CommandItem>
-                                        ))}
-                                      </CommandGroup>
-                                    </CommandList>
-                                  </Command>
-                                </PopoverContent>
-                              </Popover>
+                              <Input
+                                value={activity.activity}
+                                onChange={(e) => handleChange(activity.id, "activity", e.target.value)}
+                                placeholder="Exercise name"
+                                className="min-w-[160px]"
+                              />
                             </TableCell>
                             <TableCell>
                               <Input
@@ -413,53 +356,11 @@ const Workout = () => {
                             <CardContent className="p-6 space-y-4">
                               <div className="space-y-2">
                                 <Label>Activity</Label>
-                                <Popover open={openCombobox === `mobile-${activity.id}`} onOpenChange={(open) => setOpenCombobox(open ? `mobile-${activity.id}` : null)}>
-                                  <PopoverTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      role="combobox"
-                                      aria-expanded={openCombobox === `mobile-${activity.id}`}
-                                      className="w-full justify-between"
-                                    >
-                                      {activity.activity || "Select activity..."}
-                                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="w-[300px] p-0">
-                                    <Command shouldFilter={false}>
-                                      <CommandInput 
-                                        placeholder="Search or type..." 
-                                        value={activity.activity}
-                                        onValueChange={(value) => handleChange(activity.id, "activity", value)}
-                                      />
-                                      <CommandList>
-                                        <CommandEmpty>Type to add custom activity</CommandEmpty>
-                                        <CommandGroup>
-                                          {COMMON_ACTIVITIES.filter(ca => 
-                                            ca.toLowerCase().includes((activity.activity || "").toLowerCase())
-                                          ).map((commonActivity) => (
-                                            <CommandItem
-                                              key={commonActivity}
-                                              value={commonActivity}
-                                              onSelect={() => {
-                                                handleChange(activity.id, "activity", commonActivity);
-                                                setOpenCombobox(null);
-                                              }}
-                                            >
-                                              <Check
-                                                className={cn(
-                                                  "mr-2 h-4 w-4",
-                                                  activity.activity === commonActivity ? "opacity-100" : "opacity-0"
-                                                )}
-                                              />
-                                              {commonActivity}
-                                            </CommandItem>
-                                          ))}
-                                        </CommandGroup>
-                                      </CommandList>
-                                    </Command>
-                                  </PopoverContent>
-                                </Popover>
+                                <Input
+                                  value={activity.activity}
+                                  onChange={(e) => handleChange(activity.id, "activity", e.target.value)}
+                                  placeholder="Exercise name"
+                                />
                               </div>
                               <div className="space-y-2">
                                 <Label>Reps</Label>
