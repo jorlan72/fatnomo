@@ -201,6 +201,18 @@ const Workout = () => {
   };
 
   const handleDelete = async (id: string) => {
+    // If it's a temporary ID (not saved yet), just remove from local state
+    if (id.startsWith('temp-')) {
+      setActivities(activities.filter(a => a.id !== id));
+      toast({
+        title: "Success",
+        description: "Activity removed",
+      });
+      setDeleteId(null);
+      return;
+    }
+
+    // Otherwise, delete from database
     const { error } = await supabase
       .from("workout_activities")
       .delete()
