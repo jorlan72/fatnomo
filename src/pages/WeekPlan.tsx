@@ -123,12 +123,17 @@ const WeekPlan = () => {
 
     const { error } = await supabase
       .from("week_plan_entries")
-      .upsert({
-        user_id: user.id,
-        day_of_week: day.toLowerCase(),
-        time_slot: timeSlot,
-        content: content.trim(),
-      });
+      .upsert(
+        {
+          user_id: user.id,
+          day_of_week: day.toLowerCase(),
+          time_slot: timeSlot,
+          content: content.trim(),
+        },
+        {
+          onConflict: "user_id,day_of_week,time_slot",
+        }
+      );
 
     if (error) {
       console.error("Error saving week plan entry:", error);
