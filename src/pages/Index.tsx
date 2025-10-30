@@ -103,7 +103,8 @@ const Index = () => {
             <h2 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient">
               FatNoMo
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Don't be a fat fuck</p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Don't Be A Fat Fuck</p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">By Lanesskog</p>
           </div>
 
           <div className="grid gap-6 mt-12 max-w-2xl mx-auto">
