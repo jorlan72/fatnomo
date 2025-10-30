@@ -76,7 +76,7 @@ const Workout = () => {
 
   const handleAddRow = () => {
     const newActivity: WorkoutActivity = {
-      id: crypto.randomUUID(),
+      id: `temp-${Date.now()}`, // Temporary ID for new activities
       activity: "",
       reps: null,
       sets: null,
@@ -106,23 +106,57 @@ const Workout = () => {
 
     setSaving(true);
 
-    const activitiesToUpsert = activities.map(({ id, ...rest }) => ({
-      id,
-      ...rest,
-      user_id: user.id,
-    }));
+    // Separate new and existing activities
+    const newActivities = activities
+      .filter(a => a.id.startsWith('temp-'))
+      .map(({ id, ...rest }) => ({
+        ...rest,
+        user_id: user.id,
+      }));
 
-    const { error } = await supabase
-      .from("workout_activities")
-      .upsert(activitiesToUpsert);
+    const existingActivities = activities
+      .filter(a => !a.id.startsWith('temp-'))
+      .map(({ id, ...rest }) => ({
+        id,
+        ...rest,
+        user_id: user.id,
+      }));
 
-    if (error) {
-      toast({
-        title: "Error saving activities",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
+    let hasError = false;
+
+    // Insert new activities
+    if (newActivities.length > 0) {
+      const { error } = await supabase
+        .from("workout_activities")
+        .insert(newActivities);
+
+      if (error) {
+        toast({
+          title: "Error saving new activities",
+          description: error.message,
+          variant: "destructive",
+        });
+        hasError = true;
+      }
+    }
+
+    // Update existing activities
+    if (existingActivities.length > 0 && !hasError) {
+      const { error } = await supabase
+        .from("workout_activities")
+        .upsert(existingActivities);
+
+      if (error) {
+        toast({
+          title: "Error updating activities",
+          description: error.message,
+          variant: "destructive",
+        });
+        hasError = true;
+      }
+    }
+
+    if (!hasError) {
       toast({
         title: "Success",
         description: "Workout activities saved successfully",
