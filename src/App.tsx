@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import Weight from "./pages/Weight";
 import WeekPlan from "./pages/WeekPlan";
+import Workout from "./pages/Workout";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/weight" element={<Weight />} />
             <Route path="/week-plan" element={<WeekPlan />} />
+            <Route path="/workout" element={<Workout />} />
             <Route path="/auth" element={<Auth />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -92,6 +92,39 @@ export type Database = {
         }
         Relationships: []
       }
+      workout_activities: {
+        Row: {
+          activity: string
+          created_at: string
+          current_weight: number | null
+          id: string
+          reps: number | null
+          sets: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity: string
+          created_at?: string
+          current_weight?: number | null
+          id?: string
+          reps?: number | null
+          sets?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity?: string
+          created_at?: string
+          current_weight?: number | null
+          id?: string
+          reps?: number | null
+          sets?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

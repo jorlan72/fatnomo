@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import ThemeToggle from "@/components/ThemeToggle";
 import { User } from "@supabase/supabase-js";
-import { Scale, Calendar } from "lucide-react";
+import { Scale, Calendar, Dumbbell } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -128,6 +128,18 @@ const Index = () => {
               <div className="text-left">
                 <div className="font-bold">Static Week Plan</div>
                 <div className="text-sm opacity-90">Keep a static plan of activities</div>
+              </div>
+            </Button>
+
+            <Button
+              size="lg"
+              onClick={() => navigate("/workout")}
+              className="h-16 text-lg flex items-center justify-start gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity px-6"
+            >
+              <Dumbbell className="!h-12 !w-12" />
+              <div className="text-left">
+                <div className="font-bold">Workout Tracker</div>
+                <div className="text-sm opacity-90">Track your exercises and progress</div>
               </div>
             </Button>
           </div>
