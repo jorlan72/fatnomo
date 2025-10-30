@@ -100,6 +100,7 @@ export type Database = {
           id: string
           reps: number | null
           sets: number | null
+          times_per_week: number | null
           updated_at: string
           user_id: string
         }
@@ -110,6 +111,7 @@ export type Database = {
           id?: string
           reps?: number | null
           sets?: number | null
+          times_per_week?: number | null
           updated_at?: string
           user_id: string
         }
@@ -120,6 +122,7 @@ export type Database = {
           id?: string
           reps?: number | null
           sets?: number | null
+          times_per_week?: number | null
           updated_at?: string
           user_id?: string
         }
