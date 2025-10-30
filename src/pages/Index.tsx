@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import ThemeToggle from "@/components/ThemeToggle";
 import { User } from "@supabase/supabase-js";
-import { Scale } from "lucide-react";
+import { Scale, Calendar } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -116,6 +116,18 @@ const Index = () => {
               <div className="text-left">
                 <div className="font-bold">Weight Tracker</div>
                 <div className="text-sm opacity-90">Monitor your weight progress</div>
+              </div>
+            </Button>
+            
+            <Button
+              size="lg"
+              onClick={() => navigate("/week-plan")}
+              className="h-24 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+            >
+              <Calendar className="!h-12 !w-12" />
+              <div className="text-left">
+                <div className="font-bold">Week Plan</div>
+                <div className="text-sm opacity-90">Plan your weekly schedule</div>
               </div>
             </Button>
           </div>

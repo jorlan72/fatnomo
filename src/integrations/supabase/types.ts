@@ -38,6 +38,36 @@ export type Database = {
         }
         Relationships: []
       }
+      week_plan_entries: {
+        Row: {
+          content: string | null
+          created_at: string
+          day_of_week: string
+          id: string
+          time_slot: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          day_of_week: string
+          id?: string
+          time_slot: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          day_of_week?: string
+          id?: string
+          time_slot?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       weight_entries: {
         Row: {
           created_at: string
