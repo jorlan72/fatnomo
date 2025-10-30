@@ -24,6 +24,7 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
   const [weight, setWeight] = useState("");
   const [date, setDate] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,7 +117,7 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
-            <Popover>
+            <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -134,7 +135,12 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={(newDate) => newDate && setDate(newDate)}
+                  onSelect={(newDate) => {
+                    if (newDate) {
+                      setDate(newDate);
+                      setIsCalendarOpen(false);
+                    }
+                  }}
                   disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                   initialFocus
                   className="p-3 pointer-events-auto"
