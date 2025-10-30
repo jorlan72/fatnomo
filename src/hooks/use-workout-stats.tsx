@@ -41,26 +41,38 @@ export const useWorkoutStats = () => {
       setLoading(false);
     };
 
-    fetchActivities();
+    const setupSubscription = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) return;
 
-    // Subscribe to changes in workout_activities
-    const channel = supabase
-      .channel('workout-stats-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'workout_activities'
-        },
-        () => {
-          fetchActivities();
-        }
-      )
-      .subscribe();
+      // Subscribe to changes in workout_activities for current user
+      const channel = supabase
+        .channel('workout-stats-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'workout_activities',
+            filter: `user_id=eq.${session.user.id}`
+          },
+          () => {
+            fetchActivities();
+          }
+        )
+        .subscribe();
+
+      return channel;
+    };
+
+    fetchActivities();
+    const channelPromise = setupSubscription();
 
     return () => {
-      supabase.removeChannel(channel);
+      channelPromise.then(channel => {
+        if (channel) supabase.removeChannel(channel);
+      });
     };
   }, []);
 
