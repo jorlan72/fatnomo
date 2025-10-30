@@ -17,6 +17,7 @@ interface WorkoutActivity {
   sets: number | null;
   current_weight: number | null;
   times_per_week: number | null;
+  calories: number | null;
 }
 
 const Workout = () => {
@@ -78,6 +79,7 @@ const Workout = () => {
       sets: null,
       current_weight: null,
       times_per_week: null,
+      calories: null,
     };
     setActivities([...activities, newActivity]);
   };
@@ -197,13 +199,14 @@ const Workout = () => {
                       <TableHead>Sets</TableHead>
                       <TableHead>Current Weight (kg)</TableHead>
                       <TableHead>Times per week</TableHead>
+                      <TableHead>Calories</TableHead>
                       <TableHead className="w-[100px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {activities.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground">
+                        <TableCell colSpan={7} className="text-center text-muted-foreground">
                           No activities yet. Click "Add Activity" to get started.
                         </TableCell>
                       </TableRow>
@@ -247,6 +250,14 @@ const Workout = () => {
                               type="number"
                               value={activity.times_per_week ?? ""}
                               onChange={(e) => handleChange(activity.id, "times_per_week", e.target.value)}
+                              placeholder="0"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type="number"
+                              value={activity.calories ?? ""}
+                              onChange={(e) => handleChange(activity.id, "calories", e.target.value)}
                               placeholder="0"
                             />
                           </TableCell>

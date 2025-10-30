@@ -95,6 +95,7 @@ export type Database = {
       workout_activities: {
         Row: {
           activity: string
+          calories: number | null
           created_at: string
           current_weight: number | null
           id: string
@@ -106,6 +107,7 @@ export type Database = {
         }
         Insert: {
           activity: string
+          calories?: number | null
           created_at?: string
           current_weight?: number | null
           id?: string
@@ -117,6 +119,7 @@ export type Database = {
         }
         Update: {
           activity?: string
+          calories?: number | null
           created_at?: string
           current_weight?: number | null
           id?: string
