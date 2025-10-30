@@ -58,6 +58,7 @@ const Workout = () => {
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openCombobox, setOpenCombobox] = useState<string | null>(null);
+  const [carouselApi, setCarouselApi] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -112,6 +113,13 @@ const Workout = () => {
       calories: null,
     };
     setActivities([...activities, newActivity]);
+    
+    // Scroll to the new activity in mobile carousel
+    setTimeout(() => {
+      if (carouselApi) {
+        carouselApi.scrollTo(activities.length);
+      }
+    }, 100);
   };
 
   const handleChange = (id: string, field: keyof WorkoutActivity, value: string) => {
@@ -397,7 +405,7 @@ const Workout = () => {
                     No activities yet. Click "Add Activity" to get started.
                   </div>
                 ) : (
-                  <Carousel className="w-full">
+                  <Carousel className="w-full" setApi={setCarouselApi}>
                     <CarouselContent>
                       {activities.map((activity) => (
                         <CarouselItem key={activity.id}>
