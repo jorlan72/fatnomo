@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import type { CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +32,7 @@ const Workout = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
 
   // Calculate total weekly calories from current activities
   const totalWeeklyCalories = activities.reduce((sum, activity) => {
@@ -118,6 +120,13 @@ const Workout = () => {
       calories: null,
     };
     setActivities([...activities, newActivity]);
+    
+    // Scroll to the new activity in mobile carousel
+    setTimeout(() => {
+      if (carouselApi) {
+        carouselApi.scrollTo(activities.length);
+      }
+    }, 100);
   };
 
   const handleChange = (id: string, field: keyof WorkoutActivity, value: string) => {
@@ -386,7 +395,7 @@ const Workout = () => {
                     No activities yet. Click "Add Activity" to get started.
                   </div>
                 ) : (
-                  <Carousel className="w-full">
+                  <Carousel className="w-full" setApi={setCarouselApi}>
                     <CarouselContent>
                       {activities.map((activity) => (
                         <CarouselItem key={activity.id}>
