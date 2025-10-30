@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import ThemeToggle from "@/components/ThemeToggle";
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useWorkoutStats } from "@/hooks/use-workout-stats";
 
 interface WorkoutActivity {
   id: string;
@@ -27,12 +26,16 @@ interface WorkoutActivity {
 const Workout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { totalWeeklyCalories } = useWorkoutStats();
   const [user, setUser] = useState<any>(null);
   const [activities, setActivities] = useState<WorkoutActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  // Calculate total weekly calories from current activities
+  const totalWeeklyCalories = activities.reduce((sum, activity) => {
+    return sum + ((activity.calories || 0) * (activity.times_per_week || 0));
+  }, 0);
 
   useEffect(() => {
     let realtimeChannel: any;
