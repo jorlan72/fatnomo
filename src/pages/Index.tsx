@@ -82,7 +82,7 @@ const Index = () => {
       <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Main Menu
+            LANESSKOG 2025
           </h1>
           <div className="flex items-center gap-2">
             <ThemeToggle onThemeChange={handleThemeChange} />
@@ -104,7 +104,6 @@ const Index = () => {
               FatNoMo
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Don't Be A Fat Fuck</p>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">By Lanesskog</p>
           </div>
 
           <div className="grid gap-6 mt-12 max-w-2xl mx-auto">
@@ -119,7 +118,7 @@ const Index = () => {
                 <div className="text-sm opacity-90">Keep a log of your weight progress</div>
               </div>
             </Button>
-            
+
             <Button
               size="lg"
               onClick={() => navigate("/week-plan")}
