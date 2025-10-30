@@ -138,8 +138,8 @@ const Index = () => {
             >
               <Dumbbell className="!h-12 !w-12" />
               <div className="text-left">
-                <div className="font-bold">Workout Tracker</div>
-                <div className="text-sm opacity-90">Track your exercises and progress</div>
+                <div className="font-bold">Workout Activities</div>
+                <div className="text-sm opacity-90">List all your workout activities</div>
               </div>
             </Button>
           </div>
