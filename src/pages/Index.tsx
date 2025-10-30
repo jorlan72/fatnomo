@@ -114,8 +114,8 @@ const Index = () => {
             >
               <Scale className="!h-12 !w-12" />
               <div className="text-left">
-                <div className="font-bold">Weight Tracker</div>
-                <div className="text-sm opacity-90">Monitor your weight progress</div>
+                <div className="font-bold">Register Weight</div>
+                <div className="text-sm opacity-90">Keep a log of your weight progress</div>
               </div>
             </Button>
             
@@ -126,8 +126,8 @@ const Index = () => {
             >
               <Calendar className="!h-12 !w-12" />
               <div className="text-left">
-                <div className="font-bold">Week Plan</div>
-                <div className="text-sm opacity-90">Plan your weekly schedule</div>
+                <div className="font-bold">Static Week Plan</div>
+                <div className="text-sm opacity-90">Keep a plan of activities reoccurring each week</div>
               </div>
             </Button>
           </div>
