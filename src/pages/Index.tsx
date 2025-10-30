@@ -127,7 +127,7 @@ const Index = () => {
               <Calendar className="!h-12 !w-12" />
               <div className="text-left">
                 <div className="font-bold">Static Week Plan</div>
-                <div className="text-sm opacity-90">Keep a plan of activities reoccurring each week</div>
+                <div className="text-sm opacity-90">Keep a static plan of activities</div>
               </div>
             </Button>
           </div>
