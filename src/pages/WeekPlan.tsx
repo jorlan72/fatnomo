@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,8 @@ const WeekPlan = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [entries, setEntries] = useState<Record<string, Record<string, string>>>({});
   const currentDay = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]; // Convert Sunday=0 to Sunday=6
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const timeSlotRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
   useEffect(() => {
     const {
@@ -67,6 +69,27 @@ const WeekPlan = () => {
       loadWeekPlanEntries();
     }
   }, [user]);
+
+  useEffect(() => {
+    // Scroll to current time slot after entries are loaded
+    if (!isLoading && Object.keys(entries).length > 0) {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      const closestMinute = currentMinute < 30 ? "00" : "30";
+      const currentTimeSlot = `${currentHour.toString().padStart(2, "0")}:${closestMinute}`;
+      
+      const targetRow = timeSlotRefs.current[currentTimeSlot];
+      if (targetRow && scrollAreaRef.current) {
+        const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollContainer) {
+          const rowTop = targetRow.offsetTop;
+          const headerHeight = 50; // Approximate header height
+          scrollContainer.scrollTop = rowTop - headerHeight - 100; // Offset for better visibility
+        }
+      }
+    }
+  }, [isLoading, entries]);
 
   const loadUserTheme = async () => {
     const { data } = await supabase.from("profiles").select("theme").eq("user_id", user?.id).maybeSingle();
@@ -196,11 +219,11 @@ const WeekPlan = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Card className="overflow-hidden">
-          <ScrollArea className="h-[600px]">
+          <ScrollArea className="h-[600px]" ref={scrollAreaRef}>
             <Table>
               <TableHeader className="sticky top-0 bg-card z-20">
                 <TableRow>
-                  <TableHead className="w-24 sticky left-0 bg-card z-10">Time</TableHead>
+                  <TableHead className="w-24 sticky left-0 bg-card z-30">Time</TableHead>
                   {DAYS.map((day) => (
                     <TableHead 
                       key={day} 
@@ -213,7 +236,10 @@ const WeekPlan = () => {
               </TableHeader>
               <TableBody>
                 {TIME_SLOTS.map((timeSlot) => (
-                  <TableRow key={timeSlot}>
+                  <TableRow 
+                    key={timeSlot}
+                    ref={(el) => timeSlotRefs.current[timeSlot] = el}
+                  >
                     <TableCell className="font-medium sticky left-0 bg-card z-10 text-xs">
                       {timeSlot}
                     </TableCell>
