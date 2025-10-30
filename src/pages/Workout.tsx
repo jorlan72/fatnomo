@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import ThemeToggle from "@/components/ThemeToggle";
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useWorkoutStats } from "@/hooks/use-workout-stats";
 
 interface WorkoutActivity {
   id: string;
@@ -27,7 +26,6 @@ interface WorkoutActivity {
 const Workout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { totalWeeklyCalories } = useWorkoutStats();
   const [user, setUser] = useState<any>(null);
   const [activities, setActivities] = useState<WorkoutActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -224,18 +222,7 @@ const Workout = () => {
       <main className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Your Activities</CardTitle>
-                <CardDescription>Track your workout routine and progress</CardDescription>
-              </div>
-              <div className="text-right">
-                <div className="text-sm text-muted-foreground">Total Calories/Week</div>
-                <div className="text-2xl font-bold">
-                  {totalWeeklyCalories.toLocaleString()}
-                </div>
-              </div>
-            </div>
+            
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
