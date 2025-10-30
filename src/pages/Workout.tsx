@@ -186,7 +186,6 @@ const Workout = () => {
       <main className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>Workout Activities</CardTitle>
             <CardDescription>List your workout exercises, reps, sets, and weights</CardDescription>
           </CardHeader>
           <CardContent>
