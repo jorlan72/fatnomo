@@ -119,14 +119,15 @@ const Workout = () => {
       times_per_week: null,
       calories: null,
     };
-    setActivities([...activities, newActivity]);
+    const newActivities = [...activities, newActivity];
+    setActivities(newActivities);
     
     // Scroll to the new activity in mobile carousel
     setTimeout(() => {
       if (carouselApi) {
-        carouselApi.scrollTo(activities.length);
+        carouselApi.scrollTo(newActivities.length - 1);
       }
-    }, 100);
+    }, 300);
   };
 
   const handleChange = (id: string, field: keyof WorkoutActivity, value: string) => {
