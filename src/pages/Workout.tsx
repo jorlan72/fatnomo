@@ -198,8 +198,8 @@ const Workout = () => {
                       <TableHead>Reps</TableHead>
                       <TableHead>Sets</TableHead>
                       <TableHead>Current Weight (kg)</TableHead>
-                      <TableHead>Times per week</TableHead>
                       <TableHead>Calories</TableHead>
+                      <TableHead>Times per week</TableHead>
                       <TableHead className="w-[100px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -248,16 +248,16 @@ const Workout = () => {
                           <TableCell>
                             <Input
                               type="number"
-                              value={activity.times_per_week ?? ""}
-                              onChange={(e) => handleChange(activity.id, "times_per_week", e.target.value)}
+                              value={activity.calories ?? ""}
+                              onChange={(e) => handleChange(activity.id, "calories", e.target.value)}
                               placeholder="0"
                             />
                           </TableCell>
                           <TableCell>
                             <Input
                               type="number"
-                              value={activity.calories ?? ""}
-                              onChange={(e) => handleChange(activity.id, "calories", e.target.value)}
+                              value={activity.times_per_week ?? ""}
+                              onChange={(e) => handleChange(activity.id, "times_per_week", e.target.value)}
                               placeholder="0"
                             />
                           </TableCell>
