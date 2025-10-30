@@ -219,32 +219,36 @@ const WeekPlan = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Card className="overflow-hidden">
-          <ScrollArea className="h-[600px]" ref={scrollAreaRef}>
+          <div className="border-b border-border">
             <Table>
-              <TableHeader className="sticky top-0 bg-card z-20">
+              <TableHeader>
                 <TableRow>
-                  <TableHead className="w-24 sticky left-0 bg-card z-30">Time</TableHead>
+                  <TableHead className="w-24 bg-card">Time</TableHead>
                   {DAYS.map((day) => (
                     <TableHead 
                       key={day} 
-                      className={`min-w-32 text-center ${day === currentDay ? 'bg-primary/10' : ''}`}
+                      className={`min-w-32 text-center ${day === currentDay ? 'bg-primary/10' : 'bg-card'}`}
                     >
                       {day}
                     </TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
+            </Table>
+          </div>
+          <ScrollArea className="h-[600px]" ref={scrollAreaRef}>
+            <Table>
               <TableBody>
                 {TIME_SLOTS.map((timeSlot) => (
                   <TableRow 
                     key={timeSlot}
                     ref={(el) => timeSlotRefs.current[timeSlot] = el}
                   >
-                    <TableCell className="font-medium sticky left-0 bg-card z-10 text-xs">
+                    <TableCell className="font-medium w-24 sticky left-0 bg-card z-10 text-xs">
                       {timeSlot}
                     </TableCell>
                     {DAYS.map((day) => (
-                      <TableCell key={`${day}-${timeSlot}`} className={`p-0 align-top ${day === currentDay ? 'bg-primary/5' : ''}`}>
+                      <TableCell key={`${day}-${timeSlot}`} className={`p-0 align-top min-w-32 ${day === currentDay ? 'bg-primary/5' : ''}`}>
                         <textarea
                           className="w-full min-h-[48px] px-2 py-3 bg-transparent border-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset text-sm resize-none"
                           value={entries[day.toLowerCase()]?.[timeSlot] || ""}
