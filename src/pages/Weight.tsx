@@ -19,7 +19,7 @@ import WeightEntry from "@/components/WeightEntry";
 import WeightHistory from "@/components/WeightHistory";
 import WeightChart from "@/components/WeightChart";
 import { User } from "@supabase/supabase-js";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 
 interface WeightEntryData {
   id: string;
@@ -107,6 +107,41 @@ const Weight = () => {
     }
   };
 
+  const handleExportData = () => {
+    if (entries.length === 0) {
+      return;
+    }
+
+    // Sort entries by date (oldest first) for export
+    const sortedEntries = [...entries].sort((a, b) => 
+      new Date(a.entry_date).getTime() - new Date(b.entry_date).getTime()
+    );
+
+    // Create CSV content
+    const csvHeaders = "Date,Weight (kg)\n";
+    const csvRows = sortedEntries
+      .map(entry => {
+        const date = new Date(entry.entry_date).toLocaleDateString('en-GB');
+        return `${date},${entry.weight_kg}`;
+      })
+      .join("\n");
+    
+    const csvContent = csvHeaders + csvRows;
+
+    // Create download link
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `weight-history-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleDeleteAllData = async () => {
     const { error } = await supabase
       .from("weight_entries")
@@ -173,7 +208,17 @@ const Weight = () => {
           <WeightChart entries={entries} />
           <WeightHistory entries={entries} onEntryDeleted={fetchEntries} />
           
-          <div className="flex justify-center pt-4">
+          <div className="flex justify-center gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={handleExportData}
+              disabled={entries.length === 0}
+              className="hover:bg-accent/10"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export Data
+            </Button>
+            
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button 
