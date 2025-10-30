@@ -125,7 +125,7 @@ const Index = () => {
               onClick={() => navigate("/weight")}
               className="h-24 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
             >
-              <Scale className="!h-16 !w-16" />
+              <Scale className="!h-14 !w-14" />
               <div className="text-left">
                 <div className="font-bold">Weight Tracker</div>
                 <div className="text-sm opacity-90">Monitor your weight progress</div>
