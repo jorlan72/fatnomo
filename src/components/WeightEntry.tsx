@@ -138,7 +138,8 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
                   onSelect={(newDate) => {
                     if (newDate) {
                       setDate(newDate);
-                      setIsCalendarOpen(false);
+                      // Use setTimeout to ensure state update completes on mobile browsers
+                      setTimeout(() => setIsCalendarOpen(false), 0);
                     }
                   }}
                   disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
