@@ -222,6 +222,20 @@ const Workout = () => {
       <main className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Your Activities</CardTitle>
+                <CardDescription>Track your workout routine and progress</CardDescription>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-muted-foreground">Total Calories/Week</div>
+                <div className="text-2xl font-bold">
+                  {activities.reduce((total, activity) => {
+                    return total + ((activity.calories || 0) * (activity.times_per_week || 0));
+                  }, 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
