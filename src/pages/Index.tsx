@@ -103,9 +103,7 @@ const Index = () => {
             <h2 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient">
               Welcome to FatNoMo
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Different tools made for the Fauskanger family
-            </p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Daily tools made made simple by Lanesskog</p>
           </div>
 
           <div className="grid gap-6 mt-12 max-w-2xl mx-auto">
