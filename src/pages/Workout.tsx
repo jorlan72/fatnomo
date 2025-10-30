@@ -9,9 +9,35 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import ThemeToggle from "@/components/ThemeToggle";
-import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save, Check, ChevronsUpDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
+const COMMON_ACTIVITIES = [
+  "Push-ups",
+  "Pull-ups",
+  "Squats",
+  "Bench Press",
+  "Deadlift",
+  "Overhead Press",
+  "Barbell Row",
+  "Lunges",
+  "Plank",
+  "Bicep Curls",
+  "Tricep Dips",
+  "Leg Press",
+  "Lat Pulldown",
+  "Shoulder Press",
+  "Dumbbell Flyes",
+  "Leg Curls",
+  "Leg Extensions",
+  "Calf Raises",
+  "Running",
+  "Cycling",
+];
 
 interface WorkoutActivity {
   id: string;
@@ -31,6 +57,7 @@ const Workout = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [openCombobox, setOpenCombobox] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -251,12 +278,47 @@ const Workout = () => {
                         activities.map((activity) => (
                           <TableRow key={activity.id}>
                             <TableCell>
-                              <Input
-                                value={activity.activity}
-                                onChange={(e) => handleChange(activity.id, "activity", e.target.value)}
-                                placeholder="Exercise name"
-                                className="min-w-[160px]"
-                              />
+                              <Popover open={openCombobox === activity.id} onOpenChange={(open) => setOpenCombobox(open ? activity.id : null)}>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={openCombobox === activity.id}
+                                    className="min-w-[160px] justify-between"
+                                  >
+                                    {activity.activity || "Select activity..."}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[200px] p-0">
+                                  <Command>
+                                    <CommandInput placeholder="Search or type..." />
+                                    <CommandList>
+                                      <CommandEmpty>Type to add custom activity</CommandEmpty>
+                                      <CommandGroup>
+                                        {COMMON_ACTIVITIES.map((commonActivity) => (
+                                          <CommandItem
+                                            key={commonActivity}
+                                            value={commonActivity}
+                                            onSelect={() => {
+                                              handleChange(activity.id, "activity", commonActivity);
+                                              setOpenCombobox(null);
+                                            }}
+                                          >
+                                            <Check
+                                              className={cn(
+                                                "mr-2 h-4 w-4",
+                                                activity.activity === commonActivity ? "opacity-100" : "opacity-0"
+                                              )}
+                                            />
+                                            {commonActivity}
+                                          </CommandItem>
+                                        ))}
+                                      </CommandGroup>
+                                    </CommandList>
+                                  </Command>
+                                </PopoverContent>
+                              </Popover>
                             </TableCell>
                             <TableCell>
                               <Input
@@ -337,11 +399,47 @@ const Workout = () => {
                             <CardContent className="p-6 space-y-4">
                               <div className="space-y-2">
                                 <Label>Activity</Label>
-                                <Input
-                                  value={activity.activity}
-                                  onChange={(e) => handleChange(activity.id, "activity", e.target.value)}
-                                  placeholder="Exercise name"
-                                />
+                                <Popover open={openCombobox === activity.id} onOpenChange={(open) => setOpenCombobox(open ? activity.id : null)}>
+                                  <PopoverTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      role="combobox"
+                                      aria-expanded={openCombobox === activity.id}
+                                      className="w-full justify-between"
+                                    >
+                                      {activity.activity || "Select activity..."}
+                                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-[300px] p-0">
+                                    <Command>
+                                      <CommandInput placeholder="Search or type..." />
+                                      <CommandList>
+                                        <CommandEmpty>Type to add custom activity</CommandEmpty>
+                                        <CommandGroup>
+                                          {COMMON_ACTIVITIES.map((commonActivity) => (
+                                            <CommandItem
+                                              key={commonActivity}
+                                              value={commonActivity}
+                                              onSelect={() => {
+                                                handleChange(activity.id, "activity", commonActivity);
+                                                setOpenCombobox(null);
+                                              }}
+                                            >
+                                              <Check
+                                                className={cn(
+                                                  "mr-2 h-4 w-4",
+                                                  activity.activity === commonActivity ? "opacity-100" : "opacity-0"
+                                                )}
+                                              />
+                                              {commonActivity}
+                                            </CommandItem>
+                                          ))}
+                                        </CommandGroup>
+                                      </CommandList>
+                                    </Command>
+                                  </PopoverContent>
+                                </Popover>
                               </div>
                               <div className="space-y-2">
                                 <Label>Reps</Label>
