@@ -278,19 +278,19 @@ const Workout = () => {
                         activities.map((activity) => (
                           <TableRow key={activity.id}>
                             <TableCell>
-                              <Popover open={openCombobox === activity.id} onOpenChange={(open) => setOpenCombobox(open ? activity.id : null)}>
+                              <Popover open={openCombobox === `desktop-${activity.id}`} onOpenChange={(open) => setOpenCombobox(open ? `desktop-${activity.id}` : null)}>
                                 <PopoverTrigger asChild>
                                   <Button
                                     variant="outline"
                                     role="combobox"
-                                    aria-expanded={openCombobox === activity.id}
+                                    aria-expanded={openCombobox === `desktop-${activity.id}`}
                                     className="min-w-[160px] justify-between"
                                   >
                                     {activity.activity || "Select activity..."}
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0" onOpenAutoFocus={(e) => e.preventDefault()}>
+                                <PopoverContent className="w-[200px] p-0">
                                   <Command shouldFilter={false}>
                                     <CommandInput 
                                       placeholder="Search or type..." 
@@ -298,7 +298,7 @@ const Workout = () => {
                                       onValueChange={(value) => handleChange(activity.id, "activity", value)}
                                     />
                                     <CommandList>
-                                      <CommandEmpty>Press Enter to use "{activity.activity}"</CommandEmpty>
+                                      <CommandEmpty>Type to add custom activity</CommandEmpty>
                                       <CommandGroup>
                                         {COMMON_ACTIVITIES.filter(ca => 
                                           ca.toLowerCase().includes((activity.activity || "").toLowerCase())
@@ -405,19 +405,19 @@ const Workout = () => {
                             <CardContent className="p-6 space-y-4">
                               <div className="space-y-2">
                                 <Label>Activity</Label>
-                                <Popover open={openCombobox === activity.id} onOpenChange={(open) => setOpenCombobox(open ? activity.id : null)}>
+                                <Popover open={openCombobox === `mobile-${activity.id}`} onOpenChange={(open) => setOpenCombobox(open ? `mobile-${activity.id}` : null)}>
                                   <PopoverTrigger asChild>
                                     <Button
                                       variant="outline"
                                       role="combobox"
-                                      aria-expanded={openCombobox === activity.id}
+                                      aria-expanded={openCombobox === `mobile-${activity.id}`}
                                       className="w-full justify-between"
                                     >
                                       {activity.activity || "Select activity..."}
                                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                   </PopoverTrigger>
-                                  <PopoverContent className="w-[300px] p-0" onOpenAutoFocus={(e) => e.preventDefault()}>
+                                  <PopoverContent className="w-[300px] p-0">
                                     <Command shouldFilter={false}>
                                       <CommandInput 
                                         placeholder="Search or type..." 
@@ -425,7 +425,7 @@ const Workout = () => {
                                         onValueChange={(value) => handleChange(activity.id, "activity", value)}
                                       />
                                       <CommandList>
-                                        <CommandEmpty>Press Enter to use "{activity.activity}"</CommandEmpty>
+                                        <CommandEmpty>Type to add custom activity</CommandEmpty>
                                         <CommandGroup>
                                           {COMMON_ACTIVITIES.filter(ca => 
                                             ca.toLowerCase().includes((activity.activity || "").toLowerCase())
