@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import ThemeToggle from "@/components/ThemeToggle";
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useWorkoutStats } from "@/hooks/use-workout-stats";
 
 interface WorkoutActivity {
   id: string;
@@ -26,6 +27,7 @@ interface WorkoutActivity {
 const Workout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { totalWeeklyCalories } = useWorkoutStats();
   const [user, setUser] = useState<any>(null);
   const [activities, setActivities] = useState<WorkoutActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -230,9 +232,7 @@ const Workout = () => {
               <div className="text-right">
                 <div className="text-sm text-muted-foreground">Total Calories/Week</div>
                 <div className="text-2xl font-bold">
-                  {activities.reduce((total, activity) => {
-                    return total + ((activity.calories || 0) * (activity.times_per_week || 0));
-                  }, 0).toLocaleString()}
+                  {totalWeeklyCalories.toLocaleString()}
                 </div>
               </div>
             </div>
