@@ -110,7 +110,7 @@ const Index = () => {
             <Button
               size="lg"
               onClick={() => navigate("/weight")}
-              className="h-20 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+              className="h-16 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
             >
               <Scale className="!h-12 !w-12" />
               <div className="text-left">
@@ -122,7 +122,7 @@ const Index = () => {
             <Button
               size="lg"
               onClick={() => navigate("/week-plan")}
-              className="h-20 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+              className="h-16 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
             >
               <Calendar className="!h-12 !w-12" />
               <div className="text-left">
