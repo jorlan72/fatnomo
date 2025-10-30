@@ -8,7 +8,7 @@ import { User } from "@supabase/supabase-js";
 import { ArrowLeft } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -219,50 +219,49 @@ const WeekPlan = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Card className="overflow-hidden">
-          <div className="border-b border-border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-24 bg-card">Time</TableHead>
-                  {DAYS.map((day) => (
-                    <TableHead 
-                      key={day} 
-                      className={`min-w-32 text-center ${day === currentDay ? 'bg-primary/10' : 'bg-card'}`}
-                    >
-                      {day}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-            </Table>
-          </div>
-          <ScrollArea className="h-[600px]" ref={scrollAreaRef}>
-            <Table>
-              <TableBody>
-                {TIME_SLOTS.map((timeSlot) => (
-                  <TableRow 
-                    key={timeSlot}
-                    ref={(el) => timeSlotRefs.current[timeSlot] = el}
-                  >
-                    <TableCell className="font-medium w-24 sticky left-0 bg-card z-10 text-xs">
-                      {timeSlot}
-                    </TableCell>
+          <ScrollArea className="h-[600px] w-full" ref={scrollAreaRef}>
+            <div className="min-w-max">
+              <Table>
+                <TableHeader className="sticky top-0 z-20 bg-card">
+                  <TableRow>
+                    <TableHead className="w-24 bg-card sticky left-0 z-30">Time</TableHead>
                     {DAYS.map((day) => (
-                      <TableCell key={`${day}-${timeSlot}`} className={`p-0 align-top min-w-32 ${day === currentDay ? 'bg-primary/5' : ''}`}>
-                        <textarea
-                          className="w-full min-h-[48px] px-2 py-3 bg-transparent border-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset text-sm resize-none"
-                          value={entries[day.toLowerCase()]?.[timeSlot] || ""}
-                          onChange={(e) => handleCellChange(day, timeSlot, e.target.value)}
-                          onBlur={(e) => handleCellBlur(day, timeSlot, e.target.value)}
-                          placeholder=""
-                          rows={2}
-                        />
-                      </TableCell>
+                      <TableHead 
+                        key={day} 
+                        className={`min-w-32 text-center ${day === currentDay ? 'bg-primary/10' : 'bg-card'}`}
+                      >
+                        {day}
+                      </TableHead>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {TIME_SLOTS.map((timeSlot) => (
+                    <TableRow 
+                      key={timeSlot}
+                      ref={(el) => timeSlotRefs.current[timeSlot] = el}
+                    >
+                      <TableCell className="font-medium w-24 sticky left-0 bg-card z-10 text-xs">
+                        {timeSlot}
+                      </TableCell>
+                      {DAYS.map((day) => (
+                        <TableCell key={`${day}-${timeSlot}`} className={`p-0 align-top min-w-32 ${day === currentDay ? 'bg-primary/5' : ''}`}>
+                          <textarea
+                            className="w-full min-h-[48px] px-2 py-3 bg-transparent border-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset text-sm resize-none"
+                            value={entries[day.toLowerCase()]?.[timeSlot] || ""}
+                            onChange={(e) => handleCellChange(day, timeSlot, e.target.value)}
+                            onBlur={(e) => handleCellBlur(day, timeSlot, e.target.value)}
+                            placeholder=""
+                            rows={2}
+                          />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </Card>
       </main>
