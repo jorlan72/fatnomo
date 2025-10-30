@@ -8,7 +8,7 @@ import { User } from "@supabase/supabase-js";
 import { ArrowLeft } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -263,7 +263,6 @@ const WeekPlan = () => {
                 ))}
               </TableBody>
             </Table>
-            <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </Card>
       </main>
