@@ -8,6 +8,7 @@ import { User } from "@supabase/supabase-js";
 import { ArrowLeft } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -37,6 +38,7 @@ const WeekPlan = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [entries, setEntries] = useState<Record<string, Record<string, string>>>({});
+  const currentDay = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]; // Convert Sunday=0 to Sunday=6
 
   useEffect(() => {
     const {
@@ -193,40 +195,45 @@ const WeekPlan = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Card className="overflow-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-24 sticky left-0 bg-card z-10">Time</TableHead>
-                {DAYS.map((day) => (
-                  <TableHead key={day} className="min-w-32 text-center">
-                    {day}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {TIME_SLOTS.map((timeSlot) => (
-                <TableRow key={timeSlot}>
-                  <TableCell className="font-medium sticky left-0 bg-card z-10 text-xs">
-                    {timeSlot}
-                  </TableCell>
+        <Card className="overflow-hidden">
+          <ScrollArea className="h-[600px]">
+            <Table>
+              <TableHeader className="sticky top-0 bg-card z-20">
+                <TableRow>
+                  <TableHead className="w-24 sticky left-0 bg-card z-10">Time</TableHead>
                   {DAYS.map((day) => (
-                    <TableCell key={`${day}-${timeSlot}`} className="p-0">
-                      <input
-                        type="text"
-                        className="w-full h-full px-2 py-3 bg-transparent border-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset text-sm"
-                        value={entries[day.toLowerCase()]?.[timeSlot] || ""}
-                        onChange={(e) => handleCellChange(day, timeSlot, e.target.value)}
-                        onBlur={(e) => handleCellBlur(day, timeSlot, e.target.value)}
-                        placeholder=""
-                      />
-                    </TableCell>
+                    <TableHead 
+                      key={day} 
+                      className={`min-w-32 text-center ${day === currentDay ? 'bg-primary/10' : ''}`}
+                    >
+                      {day}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {TIME_SLOTS.map((timeSlot) => (
+                  <TableRow key={timeSlot}>
+                    <TableCell className="font-medium sticky left-0 bg-card z-10 text-xs">
+                      {timeSlot}
+                    </TableCell>
+                    {DAYS.map((day) => (
+                      <TableCell key={`${day}-${timeSlot}`} className={`p-0 align-top ${day === currentDay ? 'bg-primary/5' : ''}`}>
+                        <textarea
+                          className="w-full min-h-[48px] px-2 py-3 bg-transparent border-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset text-sm resize-none"
+                          value={entries[day.toLowerCase()]?.[timeSlot] || ""}
+                          onChange={(e) => handleCellChange(day, timeSlot, e.target.value)}
+                          onBlur={(e) => handleCellBlur(day, timeSlot, e.target.value)}
+                          placeholder=""
+                          rows={2}
+                        />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
         </Card>
       </main>
     </div>
