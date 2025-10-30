@@ -29,7 +29,7 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const weightNum = parseFloat(weight);
+    const weightNum = parseFloat(weight.replace(',', '.'));
     const validation = weightSchema.safeParse({ weight: weightNum });
 
     if (!validation.success) {
@@ -146,11 +146,16 @@ const WeightEntry = ({ onEntryAdded }: WeightEntryProps) => {
             <Label htmlFor="weight">Weight (kg)</Label>
             <Input
               id="weight"
-              type="number"
-              step="0.1"
-              placeholder="75.5"
+              type="text"
+              inputMode="decimal"
+              placeholder="75,5"
               value={weight}
-              onChange={(e) => setWeight(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === '' || /^\d*[,.]?\d*$/.test(value)) {
+                  setWeight(value);
+                }
+              }}
               required
               disabled={isLoading}
               className="text-lg"
