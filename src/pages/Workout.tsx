@@ -35,14 +35,37 @@ const Workout = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let realtimeChannel: any;
+
+    const setupAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (session?.user) {
         setUser(session.user);
         fetchActivities(session.user.id);
+
+        // Subscribe to realtime changes for this user's activities
+        realtimeChannel = supabase
+          .channel('workout-activities-changes')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'workout_activities',
+              filter: `user_id=eq.${session.user.id}`
+            },
+            () => {
+              fetchActivities(session.user.id);
+            }
+          )
+          .subscribe();
       } else {
         navigate("/auth");
       }
-    });
+    };
+
+    setupAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
@@ -53,7 +76,12 @@ const Workout = () => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+      }
+    };
   }, [navigate]);
 
   const fetchActivities = async (userId: string) => {
