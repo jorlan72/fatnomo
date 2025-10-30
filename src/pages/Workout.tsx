@@ -174,7 +174,7 @@ const Workout = () => {
             <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold">Workout Tracker</h1>
+            <h1 className="text-2xl font-bold">Workout Activities</h1>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle onThemeChange={() => {}} />
@@ -187,7 +187,7 @@ const Workout = () => {
         <Card>
           <CardHeader>
             <CardTitle>Workout Activities</CardTitle>
-            <CardDescription>Track your workout exercises, reps, sets, and weights</CardDescription>
+            <CardDescription>List your workout exercises, reps, sets, and weights</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
