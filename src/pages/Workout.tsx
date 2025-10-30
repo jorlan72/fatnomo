@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Label } from "@/components/ui/label";
 import ThemeToggle from "@/components/ThemeToggle";
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -190,7 +192,8 @@ const Workout = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <ScrollArea className="w-full rounded-md border">
+              {/* Desktop Table View */}
+              <ScrollArea className="w-full rounded-md border hidden md:block">
                 <div className="min-w-[800px]">
                   <Table>
                     <TableHeader>
@@ -285,6 +288,93 @@ const Workout = () => {
                 </div>
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
+
+              {/* Mobile Carousel View */}
+              <div className="md:hidden">
+                {activities.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    No activities yet. Click "Add Activity" to get started.
+                  </div>
+                ) : (
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {activities.map((activity) => (
+                        <CarouselItem key={activity.id}>
+                          <Card>
+                            <CardContent className="p-6 space-y-4">
+                              <div className="space-y-2">
+                                <Label>Activity</Label>
+                                <Input
+                                  value={activity.activity}
+                                  onChange={(e) => handleChange(activity.id, "activity", e.target.value)}
+                                  placeholder="Exercise name"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Reps</Label>
+                                <Input
+                                  type="number"
+                                  value={activity.reps ?? ""}
+                                  onChange={(e) => handleChange(activity.id, "reps", e.target.value)}
+                                  placeholder="0"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Sets</Label>
+                                <Input
+                                  type="number"
+                                  value={activity.sets ?? ""}
+                                  onChange={(e) => handleChange(activity.id, "sets", e.target.value)}
+                                  placeholder="0"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Current Weight (kg)</Label>
+                                <Input
+                                  type="number"
+                                  step="0.1"
+                                  value={activity.current_weight ?? ""}
+                                  onChange={(e) => handleChange(activity.id, "current_weight", e.target.value)}
+                                  placeholder="0.0"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Calories</Label>
+                                <Input
+                                  type="number"
+                                  value={activity.calories ?? ""}
+                                  onChange={(e) => handleChange(activity.id, "calories", e.target.value)}
+                                  placeholder="0"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label>Times per week</Label>
+                                <Input
+                                  type="number"
+                                  value={activity.times_per_week ?? ""}
+                                  onChange={(e) => handleChange(activity.id, "times_per_week", e.target.value)}
+                                  placeholder="0"
+                                />
+                              </div>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => setDeleteId(activity.id)}
+                                className="w-full"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete Activity
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                )}
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-2">
                 <Button onClick={handleAddRow} variant="outline" className="w-full sm:w-auto">
