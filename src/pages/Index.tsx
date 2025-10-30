@@ -14,7 +14,9 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (!session) {
         navigate("/auth");
@@ -39,11 +41,7 @@ const Index = () => {
   }, [user]);
 
   const loadUserTheme = async () => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("theme")
-      .eq("user_id", user?.id)
-      .maybeSingle();
+    const { data } = await supabase.from("profiles").select("theme").eq("user_id", user?.id).maybeSingle();
 
     if (data?.theme) {
       setTheme(data.theme);
@@ -53,21 +51,12 @@ const Index = () => {
   const handleThemeChange = async (theme: string) => {
     if (!user) return;
 
-    const { data: existingProfile } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    const { data: existingProfile } = await supabase.from("profiles").select("id").eq("user_id", user.id).maybeSingle();
 
     if (existingProfile) {
-      await supabase
-        .from("profiles")
-        .update({ theme })
-        .eq("user_id", user.id);
+      await supabase.from("profiles").update({ theme }).eq("user_id", user.id);
     } else {
-      await supabase
-        .from("profiles")
-        .insert({ user_id: user.id, theme });
+      await supabase.from("profiles").insert({ user_id: user.id, theme });
     }
   };
 
@@ -97,8 +86,8 @@ const Index = () => {
           </h1>
           <div className="flex items-center gap-2">
             <ThemeToggle onThemeChange={handleThemeChange} />
-            <Button 
-              onClick={handleLogout} 
+            <Button
+              onClick={handleLogout}
               variant="outline"
               className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive transition-colors"
             >
@@ -125,7 +114,7 @@ const Index = () => {
               onClick={() => navigate("/weight")}
               className="h-24 text-lg flex items-center justify-center gap-4 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
             >
-              <Scale className="!h-14 !w-14" />
+              <Scale className="!h-12 !w-12" />
               <div className="text-left">
                 <div className="font-bold">Weight Tracker</div>
                 <div className="text-sm opacity-90">Monitor your weight progress</div>
