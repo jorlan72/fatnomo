@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import ThemeToggle from "@/components/ThemeToggle";
 import { ArrowLeft, Plus, Trash2, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -190,99 +191,108 @@ const Workout = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Activity</TableHead>
-                      <TableHead>Reps</TableHead>
-                      <TableHead>Sets</TableHead>
-                      <TableHead>Current Weight (kg)</TableHead>
-                      <TableHead>Calories</TableHead>
-                      <TableHead>Times per week</TableHead>
-                      <TableHead className="w-[100px]">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {activities.length === 0 ? (
+              <ScrollArea className="w-full rounded-md border">
+                <div className="min-w-[800px]">
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground">
-                          No activities yet. Click "Add Activity" to get started.
-                        </TableCell>
+                        <TableHead className="min-w-[180px]">Activity</TableHead>
+                        <TableHead className="min-w-[100px]">Reps</TableHead>
+                        <TableHead className="min-w-[100px]">Sets</TableHead>
+                        <TableHead className="min-w-[140px]">Current Weight (kg)</TableHead>
+                        <TableHead className="min-w-[100px]">Calories</TableHead>
+                        <TableHead className="min-w-[130px]">Times per week</TableHead>
+                        <TableHead className="w-[100px]">Actions</TableHead>
                       </TableRow>
-                    ) : (
-                      activities.map((activity) => (
-                        <TableRow key={activity.id}>
-                          <TableCell>
-                            <Input
-                              value={activity.activity}
-                              onChange={(e) => handleChange(activity.id, "activity", e.target.value)}
-                              placeholder="Exercise name"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              value={activity.reps ?? ""}
-                              onChange={(e) => handleChange(activity.id, "reps", e.target.value)}
-                              placeholder="0"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              value={activity.sets ?? ""}
-                              onChange={(e) => handleChange(activity.id, "sets", e.target.value)}
-                              placeholder="0"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              step="0.1"
-                              value={activity.current_weight ?? ""}
-                              onChange={(e) => handleChange(activity.id, "current_weight", e.target.value)}
-                              placeholder="0.0"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              value={activity.calories ?? ""}
-                              onChange={(e) => handleChange(activity.id, "calories", e.target.value)}
-                              placeholder="0"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              value={activity.times_per_week ?? ""}
-                              onChange={(e) => handleChange(activity.id, "times_per_week", e.target.value)}
-                              placeholder="0"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setDeleteId(activity.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                    </TableHeader>
+                    <TableBody>
+                      {activities.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center text-muted-foreground">
+                            No activities yet. Click "Add Activity" to get started.
                           </TableCell>
                         </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+                      ) : (
+                        activities.map((activity) => (
+                          <TableRow key={activity.id}>
+                            <TableCell>
+                              <Input
+                                value={activity.activity}
+                                onChange={(e) => handleChange(activity.id, "activity", e.target.value)}
+                                placeholder="Exercise name"
+                                className="min-w-[160px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                value={activity.reps ?? ""}
+                                onChange={(e) => handleChange(activity.id, "reps", e.target.value)}
+                                placeholder="0"
+                                className="w-[80px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                value={activity.sets ?? ""}
+                                onChange={(e) => handleChange(activity.id, "sets", e.target.value)}
+                                placeholder="0"
+                                className="w-[80px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                step="0.1"
+                                value={activity.current_weight ?? ""}
+                                onChange={(e) => handleChange(activity.id, "current_weight", e.target.value)}
+                                placeholder="0.0"
+                                className="w-[100px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                value={activity.calories ?? ""}
+                                onChange={(e) => handleChange(activity.id, "calories", e.target.value)}
+                                placeholder="0"
+                                className="w-[80px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="number"
+                                value={activity.times_per_week ?? ""}
+                                onChange={(e) => handleChange(activity.id, "times_per_week", e.target.value)}
+                                placeholder="0"
+                                className="w-[100px]"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setDeleteId(activity.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
 
-              <div className="flex gap-2">
-                <Button onClick={handleAddRow} variant="outline">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button onClick={handleAddRow} variant="outline" className="w-full sm:w-auto">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Activity
                 </Button>
-                <Button onClick={handleSave} disabled={saving}>
+                <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
                   <Save className="h-4 w-4 mr-2" />
                   {saving ? "Saving..." : "Save Changes"}
                 </Button>
