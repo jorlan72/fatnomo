@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import ThemeToggle from "@/components/ThemeToggle";
 import { User } from "@supabase/supabase-js";
 import { Scale, Calendar, Dumbbell } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -142,6 +143,10 @@ const Index = () => {
                 <div className="text-sm opacity-90">List all your workout activities</div>
               </div>
             </Button>
+          </div>
+
+          <div className="mt-16 flex justify-center">
+            <img src={logo} alt="FatNoMo Logo" className="w-32 h-32 opacity-80" />
           </div>
         </div>
       </main>
