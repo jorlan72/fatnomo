@@ -148,6 +148,10 @@ const Index = () => {
           <div className="mt-16 flex justify-center">
             <img src={logo} alt="FatNoMo Logo" className="w-32 h-32 opacity-80" />
           </div>
+
+          <footer className="mt-8 text-center text-sm text-muted-foreground">
+            Created by J. Lanesskog - 2025
+          </footer>
         </div>
       </main>
     </div>
