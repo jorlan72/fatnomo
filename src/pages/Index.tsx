@@ -98,7 +98,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-16 max-w-4xl">
+      <main className="container mx-auto px-4 pb-16 pt-8 max-w-4xl">
         <div className="text-center space-y-8">
           <div className="space-y-4">
             <h2 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient">
